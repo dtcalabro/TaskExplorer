@@ -157,8 +157,7 @@ BOOL isSupportedOS()
     
     //check that OS is supported
     // ->10.8+ ?
-    if( (versionMajor == OS_MAJOR_VERSION_X) &&
-        (versionMinor >= OS_MINOR_VERSION_LION) )
+    if (((versionMajor == OS_MAJOR_VERSION_X) && (versionMinor >= OS_MINOR_VERSION_LION)) || (versionMajor >= OS_MAJOR_VERSION_X))
     {
         //set flag
         isSupported = YES;
