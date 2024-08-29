@@ -766,7 +766,7 @@ void makeModal(NSWindowController* windowController)
                 [NSApp activateIgnoringOtherApps:YES];
                 
                 //modal
-                [[NSApplication sharedApplication] runModalForWindow:windowController.window];
+                //[[NSApplication sharedApplication] runModalForWindow:windowController.window];
                 
             });
             
