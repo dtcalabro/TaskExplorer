@@ -144,7 +144,7 @@
         syslog(LOG_ERR, "OBJECTIVE-SEE ERROR: AuthorizationExecuteWithPrivileges() failed with %d", osStatus);
         
         //set result msg
-        [self.statusMsg setStringValue: [NSString stringWithFormat:@"error: failed with %d", osStatus]];
+        [self.statusMsg setStringValue: [NSString stringWithFormat:@"chown error: failed with %d", osStatus]];
          
         //set font to red
         self.statusMsg.textColor = [NSColor redColor];
@@ -168,6 +168,9 @@
     //end w/ NULL
     installArgs[3] = NULL;
     
+    //sleep(1); // Add a small sleep because chmod call will fail if executed right after chown call
+    [NSThread sleepForTimeInterval:1.0f];
+    
     //chmod XPC service w/ setuid
     osStatus = AuthorizationExecuteWithPrivileges(authorizationRef, "/bin/chmod", 0, (char* const*)installArgs, NULL);
     if(errAuthorizationSuccess != osStatus)
@@ -176,7 +179,7 @@
         syslog(LOG_ERR, "OBJECTIVE-SEE ERROR: AuthorizationExecuteWithPrivileges() failed with %d", osStatus);
         
         //set result msg
-        [self.statusMsg setStringValue: [NSString stringWithFormat:@"error: failed with %d", osStatus]];
+        [self.statusMsg setStringValue: [NSString stringWithFormat:@"chmod error: failed with %d", osStatus]];
         
         //set font to red
         self.statusMsg.textColor = [NSColor redColor];
@@ -204,11 +207,11 @@
     //dispatch, then action
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.50 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        //close window
-        [self.window close];
-        
         //exec UI actions etc on main thread
         dispatch_async(dispatch_get_main_queue(), ^{
+
+            //close window
+            [self.window close];
 
             //make sure app's key window is (still) front
             [((AppDelegate*)[[NSApplication sharedApplication] delegate]).window makeKeyAndOrderFront:self];
