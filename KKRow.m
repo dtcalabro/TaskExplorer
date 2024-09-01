@@ -33,7 +33,7 @@
             [[NSColor colorWithCalibratedWhite:1.0 alpha:1.0] setStroke];
             
             //set fill
-            [[NSColor colorWithCalibratedWhite:.50 alpha:1.0] setFill];
+            [[NSColor colorWithCalibratedWhite:.25 alpha:1.0] setFill];
         }
         //light mode highlight
         else
