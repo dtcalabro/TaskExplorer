@@ -12,6 +12,8 @@
 #import "Utilities.h"
 #import "AppDelegate.h"
 
+#import <mach-o/dyld.h>
+
 @implementation Binary
 
 @synthesize path;
@@ -24,6 +26,7 @@
 @synthesize isPacked;
 @synthesize loadedIn;
 @synthesize notFound;
+@synthesize inDyldSharedCache;
 @synthesize isEncrypted;
 @synthesize signingInfo;
 @synthesize isTaskBinary;
@@ -52,6 +55,13 @@
         
         //determine if its on disk
         self.notFound = ![[NSFileManager defaultManager] fileExistsAtPath:self.path];
+
+        //determine if its in dyld shared cache
+        self.inDyldSharedCache = [self isFileInDyldSharedCache];
+
+        if (self.inDyldSharedCache) {
+            self.notFound = NO; // if it's in the dyld shared cache, it's not missing
+        }
     
         //get attributes
         self.attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:self.path error:nil];
@@ -298,6 +308,20 @@ bail:
 bail:
     
     return prettyPrint;
+}
+
+//check if file is in dyld shared cache
+- (BOOL)isFileInDyldSharedCache
+{
+    //return value
+    BOOL isInCache = NO;
+    
+    // Check if the file is in the dyld shared cache on macos 11.0+
+    if (@available(macOS 11.0, *)) {
+        isInCache = _dyld_shared_cache_contains_path([self.path fileSystemRepresentation]);
+    }
+    
+    return isInCache;
 }
 
 //override method

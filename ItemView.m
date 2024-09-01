@@ -309,6 +309,9 @@ NSAttributedString* initBinaryString(id item, BOOL isSearchWindow)
     //init default color for pid
     attributes = [NSDictionary dictionaryWithObject:NSColor.controlTextColor forKey:NSForegroundColorAttributeName];
     
+    //flag to indicate if we have parenthesis, among other things
+    BOOL hasParenthesis = NO;
+
     //search window
     // ->only for tasks, since dylibs in search window are handled elsewhere ('loaded in')
     if( (YES == isSearchWindow) &&
@@ -316,37 +319,36 @@ NSAttributedString* initBinaryString(id item, BOOL isSearchWindow)
     {
         //add pid
         [taskString appendAttributedString:[[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@" (task: %@", ((Task*)item).pid] attributes:attributes]];
+
+        //set has parenthesis flag
+        hasParenthesis = YES;
     }
     //normal window
     // ->add encrypted/packed info...
     else
-    {
+    {   
         //task
         // ->add task's pid
         if(YES == [item isKindOfClass:[Task class]])
         {
             //add pid
             [taskString appendAttributedString:[[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@" (pid: %@", ((Task*)item).pid] attributes:attributes]];
+
+            //set has parenthesis flag
+            hasParenthesis = YES;
         }
         
         //added encrypted or packed
         if( (YES == binary.isEncrypted) ||
             (YES == binary.isPacked) )
         {
-            //init color for comma, etc
+            //init color for comma/parenthesis
             attributes = [NSDictionary dictionaryWithObject:NSColor.controlTextColor forKey:NSForegroundColorAttributeName];
             
-            //tasks
-            //add comma string
-            if(YES == [item isKindOfClass:[Task class]])
-            {
-                //close
-                [taskString appendAttributedString:[[NSMutableAttributedString alloc] initWithString:@", " attributes:attributes]];
-            }
-            //dylibs
-            // ->open'('
-            else
-            {
+            if (hasParenthesis == YES) { // if we have parenthesis, that means we also need a comma
+                //add ','
+                [taskString appendAttributedString:[[NSAttributedString alloc] initWithString:@", " attributes:attributes]];
+            } else { // if we don't have parenthesis, that means we must open parenthesis first
                 //open
                 [taskString appendAttributedString:[[NSMutableAttributedString alloc] initWithString:@" (" attributes:attributes]];
             }
@@ -368,37 +370,47 @@ NSAttributedString* initBinaryString(id item, BOOL isSearchWindow)
                 //add
                 [taskString appendAttributedString:[[NSAttributedString alloc] initWithString:@"packed" attributes:attributes]];
             }
-            
-            //dylib, need to close string here unless binary not found, then going to add that
-            // ->normally it doesn't have anything after...
-            if( (YES != [item isKindOfClass:[Task class]]) &&
-                (YES != binary.notFound))
-            {
-                //init color for closing
-                attributes = [NSDictionary dictionaryWithObject:NSColor.controlTextColor forKey:NSForegroundColorAttributeName];
-                
-                //close string
-                [taskString appendAttributedString:[[NSMutableAttributedString alloc] initWithString:@")" attributes:attributes]];
-            }
-            
+
+            //set has parenthesis flag
+            hasParenthesis = YES;
         }//encrypted or packed
         
         //add 'not found'
         if(YES == binary.notFound)
         {
+            //init color for comma/parenthesis
+            attributes = [NSDictionary dictionaryWithObject:NSColor.controlTextColor forKey:NSForegroundColorAttributeName];
+
+            if (hasParenthesis == YES) { // if we have parenthesis, that means we also need a comma
+                //add ','
+                [taskString appendAttributedString:[[NSAttributedString alloc] initWithString:@", " attributes:attributes]];
+            } else { // if we don't have parenthesis, that means we must open parenthesis first
+                //open
+                [taskString appendAttributedString:[[NSMutableAttributedString alloc] initWithString:@" (" attributes:attributes]];
+            }
+            
+            //init color
+            // ->red
+            attributes  = [NSDictionary dictionaryWithObject:[NSColor redColor] forKey:NSForegroundColorAttributeName];
+            
+            //add
+            [taskString appendAttributedString:[[NSAttributedString alloc] initWithString:@"deleted" attributes:attributes]];
+            
+            //set has parenthesis flag
+            hasParenthesis = YES;
+        }//not found
+
+        //dyld shared cache
+        if (YES == binary.inDyldSharedCache)
+        {
             //add ','
-            if( (YES == binary.isEncrypted) ||
-                (YES == binary.isPacked) )
-            {
+            if (hasParenthesis == YES) { // if we have parenthesis, that means we also need a comma
                 //init color for comma,
                 attributes = [NSDictionary dictionaryWithObject:NSColor.controlTextColor forKey:NSForegroundColorAttributeName];
                 
                 //add
                 [taskString appendAttributedString:[[NSAttributedString alloc] initWithString:@", " attributes:attributes]];
-            }
-            //open string
-            else
-            {
+            } else { // if we don't have parenthesis, that means we must open parenthesis first
                 //init color for comma, etc
                 attributes = [NSDictionary dictionaryWithObject:NSColor.controlTextColor forKey:NSForegroundColorAttributeName];
                 
@@ -424,26 +436,15 @@ NSAttributedString* initBinaryString(id item, BOOL isSearchWindow)
             attributes  = [NSDictionary dictionaryWithObject:[NSColor redColor] forKey:NSForegroundColorAttributeName];
             
             //add
-            [taskString appendAttributedString:[[NSAttributedString alloc] initWithString:@"deleted" attributes:attributes]];
-            
-            //dylib, need to close string here
-            // ->normally it doesn't have anything after...
-            if(YES != [item isKindOfClass:[Task class]])
-            {
-                //init color for closing
-                attributes = [NSDictionary dictionaryWithObject:NSColor.controlTextColor forKey:NSForegroundColorAttributeName];
-                
-                //close string
-                [taskString appendAttributedString:[[NSMutableAttributedString alloc] initWithString:@")" attributes:attributes]];
-            }
-            
-        }//not found
+            [taskString appendAttributedString:[[NSAttributedString alloc] initWithString:@"dyld shared cache" attributes:attributes]];
+
+            //set has parenthesis flag
+            hasParenthesis = YES;
+        }//dyld shared cache
     }
     
-    //task
-    // ->close string
-    if(YES == [item isKindOfClass:[Task class]])
-    {
+    // ->close parenthesis if we have them
+    if (hasParenthesis == YES) {
         //init color for closing
         attributes = [NSDictionary dictionaryWithObject:NSColor.controlTextColor forKey:NSForegroundColorAttributeName];
         

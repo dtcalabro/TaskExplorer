@@ -53,6 +53,9 @@
 //not found
 @property BOOL notFound;
 
+//in dyld shared cache flag
+@property BOOL inDyldSharedCache;
+
 
 /* VIRUS TOTAL INFO */
 
