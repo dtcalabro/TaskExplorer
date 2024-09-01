@@ -710,7 +710,7 @@ bail:
             }
             
             //if there is none
-            noItemsMsg = @"no dylibs found";
+            noItemsMsg = @"No dylibs found";
         
             break;
             
@@ -725,7 +725,7 @@ bail:
             }
             
             //if there is none
-            noItemsMsg = @"no files found";
+            noItemsMsg = @"No files found";
             
             break;
             
@@ -740,7 +740,7 @@ bail:
             }
             
             //if there is none
-            noItemsMsg = @"no network connections found";
+            noItemsMsg = @"No network connections found";
             
             break;
             
@@ -922,7 +922,7 @@ bail:
     NSAlert* fullScanAlert = nil;
     
     //alloc/init alert
-    fullScanAlert = [NSAlert alertWithMessageText:[NSString stringWithFormat:@"OS X %@ is not supported", [[NSProcessInfo processInfo] operatingSystemVersionString]] defaultButton:@"Ok" alternateButton:nil otherButton:nil informativeTextWithFormat:@"sorry for the inconvenience!"];
+    fullScanAlert = [NSAlert alertWithMessageText:[NSString stringWithFormat:@"OS X %@ is not supported", [[NSProcessInfo processInfo] operatingSystemVersionString]] defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"Sorry for the inconvenience!"];
     
     //and show it
     [fullScanAlert runModal];
@@ -1265,14 +1265,14 @@ bail:
                 syslog(LOG_ERR, "OBJECTIVE-SEE ERROR: saving output to %s failed with %s", [[panel URL] fileSystemRepresentation], [[error description] UTF8String]);
                 
                 //init popup w/ error msg
-                saveResultPopup = [NSAlert alertWithMessageText:@"ERROR: failed to save output" defaultButton:@"Ok" alternateButton:nil otherButton:nil informativeTextWithFormat:@"details: %@", error];
+                saveResultPopup = [NSAlert alertWithMessageText:@"ERROR: failed to save output" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"Details: %@", error];
             }
             //happy
             // ->set result msg
             else
             {
                 //init popup w/ msg
-                saveResultPopup = [NSAlert alertWithMessageText:@"Succesfully saved output" defaultButton:@"Ok" alternateButton:nil otherButton:nil informativeTextWithFormat:@"file: %s", [[panel URL] fileSystemRepresentation]];
+                saveResultPopup = [NSAlert alertWithMessageText:@"Succesfully saved output" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"File: %s", [[panel URL] fileSystemRepresentation]];
             }
             
             //show popup
@@ -1820,6 +1820,7 @@ bail:
     self.filteringOverlay.layer.masksToBounds = YES;
     
     //dark mode
+
     // set overlay to light
     if(YES == isDarkMode())
     {
@@ -2102,7 +2103,7 @@ bail:
     if(0 == taskEnumerator.flaggedItems.count)
     {
         //alloc/init alert
-        alert = [NSAlert alertWithMessageText:[NSString stringWithFormat:@"No items flagged by VirusTotal"] defaultButton:@"Ok" alternateButton:nil otherButton:nil informativeTextWithFormat:@"hooray! 😇"];
+        alert = [NSAlert alertWithMessageText:[NSString stringWithFormat:@"No items flagged by VirusTotal"] defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"Hooray! 😇"];
         
         //and show it
         [alert runModal];
@@ -2311,7 +2312,7 @@ bail:
         if(segmentTag != DYLIBS_VIEW)
         {
             //alloc/init alert
-            noKeywordsAlert = [NSAlert alertWithMessageText:@"#keywords not (yet) supported for files/connections" defaultButton:@"Ok" alternateButton:nil otherButton:nil informativeTextWithFormat:@""];
+            noKeywordsAlert = [NSAlert alertWithMessageText:@"#keywords not (yet) supported for files/connections" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@""];
             
             //and show it
             [noKeywordsAlert runModal];
@@ -2428,7 +2429,7 @@ bail:
         case UPDATE_ERROR:
             
             //set details
-            details = @"error, failed to check for an update.";
+            details = @"Error, failed to check for an update.";
             
             //set action
             action = @"Close";
@@ -2439,7 +2440,7 @@ bail:
         case UPDATE_NOTHING_NEW:
             
             //set details
-            details = [NSString stringWithFormat:@"you're all up to date! (v. %@)", getAppVersion()];
+            details = [NSString stringWithFormat:@"You're all up to date! (v. %@)", getAppVersion()];
             
             //set action
             action = @"Close";
@@ -2450,7 +2451,7 @@ bail:
         case UPDATE_NEW_VERSION:
             
             //set details
-            details = [NSString stringWithFormat:@"a new version (%@) is available!", newVersion];
+            details = [NSString stringWithFormat:@"A new version (%@) is available!", newVersion];
             
             //set action
             action = @"Update";
